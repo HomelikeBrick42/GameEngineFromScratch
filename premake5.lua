@@ -36,11 +36,13 @@ project "BrickEngine"
 	
 	includedirs
 	{
-		"%{wks.location}/%{prj.name}/src"
+		"%{wks.location}/%{prj.name}/src",
+		os.getenv("VULKAN_SDK") .. "/Include"
 	}
 	
 	links
 	{
+		os.getenv("VULKAN_SDK") .. "/Lib/vulkan-1.lib"
 	}
 
 	defines
@@ -88,7 +90,8 @@ project "Sandbox"
 	includedirs
 	{
 		"%{wks.location}/%{prj.name}/src",
-		"%{wks.location}/BrickEngine/src"
+		"%{wks.location}/BrickEngine/src",
+		os.getenv("VULKAN_SDK") .. "/Include"
 	}
 
 	links
