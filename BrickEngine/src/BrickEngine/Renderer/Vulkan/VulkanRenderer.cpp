@@ -54,31 +54,13 @@ namespace BrickEngine {
 		SelectPhysicalDevice(deviceExtentions);
 		BRICKENGINE_ASSERT(m_PhysicalDevice);
 
-		float queuePriorities[] = { 1.0f };
-		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-		VkDeviceQueueCreateInfo& graphicsQueueCreateInfo = queueCreateInfos.emplace_back();
-		graphicsQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		graphicsQueueCreateInfo.pQueuePriorities = queuePriorities;
-		graphicsQueueCreateInfo.queueCount = 1;
-		graphicsQueueCreateInfo.queueFamilyIndex = m_GraphicsQueueFamilyIndex;
-
-		if (m_PresentQueueFamilyIndex != m_GraphicsQueueFamilyIndex)
-		{
-			VkDeviceQueueCreateInfo& presentQueueCreateInfo = queueCreateInfos.emplace_back();
-			presentQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			presentQueueCreateInfo.pQueuePriorities = queuePriorities;
-			presentQueueCreateInfo.queueCount = 1;
-			presentQueueCreateInfo.queueFamilyIndex = m_PresentQueueFamilyIndex;
-		}
-
-		VkDeviceCreateInfo deviceCreateInfo = { VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO };
-		deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtentions.size());
-		deviceCreateInfo.ppEnabledExtensionNames = deviceExtentions.data();
-		deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-		deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-
-		VK_CHECK(vkCreateDevice(m_PhysicalDevice, &deviceCreateInfo, nullptr, &m_Device));
+		CreateDevice(deviceExtentions);
 		BRICKENGINE_ASSERT(m_Device);
+
+		vkGetDeviceQueue(m_Device, m_GraphicsQueueFamilyIndex, 0, &m_GraphicsQueue);
+		BRICKENGINE_ASSERT(m_GraphicsQueue);
+		vkGetDeviceQueue(m_Device, m_PresentQueueFamilyIndex, 0, &m_PresentQueue);
+		BRICKENGINE_ASSERT(m_PresentQueue);
 	}
 
 	VulkanRenderer::~VulkanRenderer()
@@ -311,6 +293,38 @@ namespace BrickEngine {
 					break;
 			}
 		}
+	}
+
+	void VulkanRenderer::CreateDevice(std::vector<const char*>& requiredExtentions)
+	{
+		float queuePriorities[] = { 1.0f };
+		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+		VkDeviceQueueCreateInfo& graphicsQueueCreateInfo = queueCreateInfos.emplace_back();
+		graphicsQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		graphicsQueueCreateInfo.pQueuePriorities = queuePriorities;
+		graphicsQueueCreateInfo.queueCount = 1;
+		graphicsQueueCreateInfo.queueFamilyIndex = m_GraphicsQueueFamilyIndex;
+
+		if (m_PresentQueueFamilyIndex != m_GraphicsQueueFamilyIndex)
+		{
+			VkDeviceQueueCreateInfo& presentQueueCreateInfo = queueCreateInfos.emplace_back();
+			presentQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			presentQueueCreateInfo.pQueuePriorities = queuePriorities;
+			presentQueueCreateInfo.queueCount = 1;
+			presentQueueCreateInfo.queueFamilyIndex = m_PresentQueueFamilyIndex;
+		}
+
+		VkPhysicalDeviceFeatures physicalDeviceFeatures = {};
+		physicalDeviceFeatures.samplerAnisotropy = VK_TRUE;
+
+		VkDeviceCreateInfo deviceCreateInfo = { VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO };
+		deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(requiredExtentions.size());
+		deviceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
+		deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+		deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+		deviceCreateInfo.pEnabledFeatures = &physicalDeviceFeatures;
+
+		VK_CHECK(vkCreateDevice(m_PhysicalDevice, &deviceCreateInfo, nullptr, &m_Device));
 	}
 
 }

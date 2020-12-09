@@ -15,6 +15,7 @@ namespace BrickEngine {
 	private:
 		void CreateInstance(std::vector<const char*>& requiredExtentions);
 		void SelectPhysicalDevice(std::vector<const char*>& requiredExtentions);
+		void CreateDevice(std::vector<const char*>& requiredExtentions);
 	private:
 		Window* m_Window = nullptr;
 	private:
@@ -32,6 +33,9 @@ namespace BrickEngine {
 		VkPhysicalDevice m_PhysicalDevice = nullptr;
 
 		VkDevice m_Device = nullptr;
+
+		VkQueue m_GraphicsQueue = nullptr;
+		VkQueue m_PresentQueue = nullptr;
 	};
 
 }
