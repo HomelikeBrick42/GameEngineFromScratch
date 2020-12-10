@@ -12,11 +12,14 @@ namespace BrickEngine {
 	{
 		friend class VulkanPlatform;
 	public:
-		WindowsWindow(uint32_t width, uint32_t height, const std::string& title);
+		WindowsWindow(uint32_t width, uint32_t height, const std::string& title, bool resizable);
 		~WindowsWindow();
 
 		virtual bool WantsToClose() override final { return m_WantsToClose; }
 		virtual void PollEvents() override final;
+
+		virtual int32_t GetWidth() override final { return m_Width; }
+		virtual int32_t GetHeight() override final { return m_Height; }
 	private:
 		static LRESULT CALLBACK HandleMessagesStatic(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		LRESULT CALLBACK HandleMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -25,6 +28,8 @@ namespace BrickEngine {
 		HWND m_HWND;
 		HDC m_DC;
 		bool m_WantsToClose = false;
+		int32_t m_Width;
+		int32_t m_Height;
 	};
 
 }

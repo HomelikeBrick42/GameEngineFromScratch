@@ -22,7 +22,7 @@ void Application::Run()
 
 void Application::Init()
 {
-	m_Window.reset(Window::Create(1280, 720, "Vulkan Engine"));
+	m_Window.reset(Window::Create(1280, 720, "Vulkan Engine", false));
 	m_Renderer.reset(new VulkanRenderer(m_Window.get()));
 }
 

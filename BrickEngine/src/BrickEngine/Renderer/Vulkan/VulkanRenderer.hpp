@@ -16,6 +16,12 @@ namespace BrickEngine {
 		void CreateInstance(std::vector<const char*>& requiredExtentions);
 		void SelectPhysicalDevice(std::vector<const char*>& requiredExtentions);
 		void CreateDevice(std::vector<const char*>& requiredExtentions);
+		void CreateShader(const std::string& path);
+		void OnWindowResize();
+		void CreateSwapchain();
+		void CreateSwapchainImagesAndViews();
+		void CreateRenderPass();
+		void CreateGraphicsPipeline();
 	private:
 		Window* m_Window = nullptr;
 	private:
@@ -27,7 +33,6 @@ namespace BrickEngine {
 
 		uint32_t m_GraphicsQueueFamilyIndex = -1;
 		uint32_t m_PresentQueueFamilyIndex = -1;
-		VkSurfaceCapabilitiesKHR m_SurfaceCapabilities = {};
 		VkSurfaceFormatKHR m_SurfaceFormat = {};
 		VkPresentModeKHR m_PresentMode = {};
 		VkPhysicalDevice m_PhysicalDevice = nullptr;
@@ -36,6 +41,17 @@ namespace BrickEngine {
 
 		VkQueue m_GraphicsQueue = nullptr;
 		VkQueue m_PresentQueue = nullptr;
+
+		std::vector<VkPipelineShaderStageCreateInfo> m_ShaderStages = {};
+
+		VkExtent2D m_SwapchainExtent = {};
+		std::vector<VkImage> m_SwapchainImages = {};
+		std::vector<VkImageView> m_SwapchainImageViews = {};
+		VkSwapchainKHR m_Swapchain = nullptr;
+
+		VkPipelineLayout m_PipelineLayout = nullptr;
+		VkPipeline m_Pipeline = nullptr;
+		VkRenderPass m_RenderPass = nullptr;
 	};
 
 }

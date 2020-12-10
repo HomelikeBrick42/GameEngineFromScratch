@@ -38,7 +38,7 @@
 
 	#define BRICKENGINE_ASSERT(x) {\
 		if (!(x)) { \
-			::BrickEngine::Log::Fatal("Assertion Failure : '" #x "' in file: " __FILE__ ":" LINE_STRING); \
+			::BrickEngine::Log::Fatal("Assertion Failure : '" #x "' in function: '" __FUNCTION__ "' in file: " __FILE__ ":" LINE_STRING); \
 			BRICKENGINE_DEBUG_BREAK(); \
 		} \
 	}

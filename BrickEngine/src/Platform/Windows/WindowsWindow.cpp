@@ -9,8 +9,8 @@ namespace BrickEngine {
 
 	static std::uint32_t s_WindowCount = 0;
 
-	WindowsWindow::WindowsWindow(uint32_t width, uint32_t height, const std::string& title)
-		: m_Instance(GetModuleHandle(nullptr))
+	WindowsWindow::WindowsWindow(uint32_t width, uint32_t height, const std::string& title, bool resizable)
+		: m_Instance(GetModuleHandle(nullptr)), m_Width(width), m_Height(height)
 	{
 		if (s_WindowCount == 0)
 		{
@@ -44,19 +44,21 @@ namespace BrickEngine {
 		}
 		s_WindowCount++;
 
+		DWORD windowFlags = WS_CAPTION | (resizable ? WS_OVERLAPPED : 0) | WS_MINIMIZEBOX | WS_SYSMENU;
+
 		RECT wr = {};
 		wr.left = 100;
 		wr.right = width + wr.left;
 		wr.top = 100;
 		wr.bottom = height + wr.top;
-		AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, false);
+		AdjustWindowRect(&wr, windowFlags, false);
 
 		std::wstring stemp(title.begin(), title.end());
 
 		m_HWND = CreateWindow(
 			s_ClassName,
 			stemp.c_str(),
-			WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+			windowFlags,
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			wr.right - wr.left,
 			wr.bottom - wr.top,
@@ -100,6 +102,12 @@ namespace BrickEngine {
 	{
 		switch (msg)
 		{
+			case WM_SIZE:
+			{
+				m_Width = LOWORD(lParam);
+				m_Height = HIWORD(lParam);
+				return 0;
+			}
 			case WM_QUIT:
 			case WM_CLOSE:
 			{

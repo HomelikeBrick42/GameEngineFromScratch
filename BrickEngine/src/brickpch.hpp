@@ -18,3 +18,4 @@
 #include <unordered_set>
 
 #include "BrickEngine/Core/Log.hpp"
+#include "BrickEngine/Core/File.hpp"
